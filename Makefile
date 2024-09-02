@@ -16,9 +16,9 @@ cover:
 build:
 	mkdir -p $(BUILD_DIR)
 	rm -rf $(BUILD_DIR)/*
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_linux_amd64 ./cmd/main/main.go
-	GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_linux_i386 ./cmd/main/main.go
-	GOOS=linux GOARCH=arm CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_linux_arm ./cmd/main/main.go
-	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_linux_arm64 ./cmd/main/main.go
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_windows_amd64.exe ./cmd/main/main.go
-	GOOS=windows GOARCH=386 CGO_ENABLED=0 go build -o $(BUILD_DIR)/hamsterbot_windows_i386.exe ./cmd/main/main.go
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_linux_amd64 ./cmd/main/main.go
+	GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_linux_i386 ./cmd/main/main.go
+	GOOS=linux GOARCH=arm CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_linux_arm ./cmd/main/main.go
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_linux_arm64 ./cmd/main/main.go
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_windows_amd64.exe ./cmd/main/main.go
+	GOOS=windows GOARCH=386 CGO_ENABLED=0 go build -o $(BUILD_DIR)/main_windows_i386.exe ./cmd/main/main.go

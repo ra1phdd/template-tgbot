@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	tele "gopkg.in/telebot.v3"
 	"hamsterbot/config"
-	"hamsterbot/internal/app/endpoint/base"
+	"hamsterbot/internal/app/handlers/base"
 	baseService "hamsterbot/internal/app/services/base"
 	"hamsterbot/pkg/cache"
 	"hamsterbot/pkg/db"

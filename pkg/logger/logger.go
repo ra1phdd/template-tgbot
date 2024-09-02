@@ -2,6 +2,8 @@ package logger
 
 import (
 	"fmt"
+	"gopkg.in/telebot.v3"
+	"log"
 	"os"
 	"time"
 
@@ -25,13 +27,11 @@ func Init(loggerLevel string) {
 
 	err := os.MkdirAll("logs", os.ModePerm)
 	if err != nil {
-		fmt.Println("Ошибка создания папки logs", err.Error())
-		return
+		log.Fatal("Ошибка создания папки logs", err.Error())
 	}
-	logFile, err := os.OpenFile("logs/stream-recorder.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	logFile, err := os.OpenFile("logs/main.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Println("Ошибка создания файла stream-recorder.log", err.Error())
-		return
+		log.Fatal("Ошибка создания файла main.log", err.Error())
 	}
 	writer := zapcore.AddSync(logFile)
 
@@ -62,18 +62,68 @@ func Debug(message string, fields ...zap.Field) {
 	logger.Debug(message, fields...)
 }
 
+func Debugf(message string, c *telebot.Chat, fields ...zap.Field) {
+	name := c.FirstName
+	if c.Title != "" {
+		name = c.Title
+	} else if c.LastName != "" {
+		name = fmt.Sprintf("%s %s", c.FirstName, c.LastName)
+	}
+	logger.Debug(fmt.Sprintf("[%d/%s] %s", c.ID, name, message), fields...)
+}
+
 func Info(message string, fields ...zap.Field) {
 	logger.Info(message, fields...)
+}
+
+func Infof(message string, c *telebot.Chat, fields ...zap.Field) {
+	name := c.FirstName
+	if c.Title != "" {
+		name = c.Title
+	} else if c.LastName != "" {
+		name = fmt.Sprintf("%s %s", c.FirstName, c.LastName)
+	}
+	logger.Info(fmt.Sprintf("[%d/%s] %s", c.ID, name, message), fields...)
 }
 
 func Warn(message string, fields ...zap.Field) {
 	logger.Warn(message, fields...)
 }
 
+func Warnf(message string, c *telebot.Chat, fields ...zap.Field) {
+	name := c.FirstName
+	if c.Title != "" {
+		name = c.Title
+	} else if c.LastName != "" {
+		name = fmt.Sprintf("%s %s", c.FirstName, c.LastName)
+	}
+	logger.Warn(fmt.Sprintf("[%d/%s] %s", c.ID, name, message), fields...)
+}
+
 func Error(message string, fields ...zap.Field) {
 	logger.Error(message, fields...)
 }
 
+func Errorf(message string, c *telebot.Chat, fields ...zap.Field) {
+	name := c.FirstName
+	if c.Title != "" {
+		name = c.Title
+	} else if c.LastName != "" {
+		name = fmt.Sprintf("%s %s", c.FirstName, c.LastName)
+	}
+	logger.Error(fmt.Sprintf("[%d/%s] %s", c.ID, name, message), fields...)
+}
+
 func Fatal(message string, fields ...zap.Field) {
 	logger.Fatal(message, fields...)
+}
+
+func Fatalf(message string, c *telebot.Chat, fields ...zap.Field) {
+	name := c.FirstName
+	if c.Title != "" {
+		name = c.Title
+	} else if c.LastName != "" {
+		name = fmt.Sprintf("%s %s", c.FirstName, c.LastName)
+	}
+	logger.Fatal(fmt.Sprintf("[%d/%s] %s", c.ID, name, message), fields...)
 }

@@ -8,7 +8,7 @@ import (
 
 type Configuration struct {
 	TelegramAPI string `env:"TELEGRAM_API,required"`
-	LoggerLevel string `env:"LOGGER_LEVEL" envDefault:"debug"`
+	LoggerLevel string `env:"LOGGER_LEVEL" envDefault:"warn"`
 	DB          DB
 	Redis       Redis
 }
@@ -31,7 +31,7 @@ type Redis struct {
 func NewConfig(files ...string) (*Configuration, error) {
 	err := godotenv.Load(files...)
 	if err != nil {
-		log.Fatalf("Файл .env не найден: %s", err)
+		log.Fatal("Файл .env не найден", err.Error())
 	}
 
 	cfg := Configuration{}
