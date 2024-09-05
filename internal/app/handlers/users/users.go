@@ -5,10 +5,10 @@ import (
 )
 
 type User interface {
-	GetUserById(id int64) (map[string]interface{}, error)
-	AddUser(user models.User) error
-	UpdateUser(user models.User) error
-	DeleteUser(id int64) error
+	GetById(id int64) (models.User, error)
+	Add(user models.User) error
+	Update(user models.User) error
+	Delete(id int64) error
 }
 
 type Endpoint struct {

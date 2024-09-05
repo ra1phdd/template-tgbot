@@ -17,7 +17,7 @@ func New() *Service {
 	return &Service{}
 }
 
-func (s Service) GetUserById(id int64) (models.User, error) {
+func (s Service) GetById(id int64) (models.User, error) {
 	var data models.User
 
 	cacheKey := fmt.Sprintf("user:%d", id)
@@ -31,14 +31,14 @@ func (s Service) GetUserById(id int64) (models.User, error) {
 		}
 	}
 
-	rows, err := db.Conn.Query(`SELECT * FROM users WHERE id = $1`)
+	rows, err := db.Conn.Query(`SELECT * FROM users WHERE id = $1`, id)
 	if err != nil {
 		return models.User{}, err
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		err = rows.Scan(&data)
+	if rows.Next() {
+		err = rows.Scan(&data.ID, &data.Username, &data.Firstname, &data.Lastname, &data.IsPremium)
 		if err != nil {
 			return models.User{}, err
 		}
@@ -59,7 +59,7 @@ func (s Service) GetUserById(id int64) (models.User, error) {
 	return data, nil
 }
 
-func (s Service) DeleteUser(id int64) error {
+func (s Service) Delete(id int64) error {
 	rows, err := db.Conn.Queryx(`DELETE FROM users WHERE id = $1`, id)
 	if err != nil {
 		return err
@@ -69,8 +69,8 @@ func (s Service) DeleteUser(id int64) error {
 	return nil
 }
 
-func (s Service) UpdateUser(user models.User) error {
-	userOld, err := s.GetUserById(user.ID)
+func (s Service) Update(user models.User) error {
+	userOld, err := s.GetById(user.ID)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (s Service) UpdateUser(user models.User) error {
 	return nil
 }
 
-func (s Service) AddUser(user models.User) error {
+func (s Service) Add(user models.User) error {
 	rows, err := db.Conn.Queryx(`INSERT INTO users (id, username, firstname, lastname, ispremium) VALUES ($1, $2, $3, $4, $5)`, user.ID, user.Username, user.Firstname, user.Lastname, user.IsPremium)
 	if err != nil {
 		return err

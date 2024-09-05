@@ -8,10 +8,10 @@ import (
 )
 
 type User interface {
-	GetUserById(id int64) (models.User, error)
-	AddUser(user models.User) error
-	UpdateUser(user models.User) error
-	DeleteUser(id int64) error
+	GetById(id int64) (models.User, error)
+	Add(user models.User) error
+	Update(user models.User) error
+	Delete(id int64) error
 }
 
 type Endpoint struct {
@@ -21,7 +21,7 @@ type Endpoint struct {
 
 func (e *Endpoint) IsUser(next tele.HandlerFunc) tele.HandlerFunc {
 	return func(c tele.Context) error {
-		data, err := e.User.GetUserById(c.Sender().ID)
+		data, err := e.User.GetById(c.Sender().ID)
 		if err != nil {
 			if errors.Is(err, constants.ErrUserNotFound) {
 				user := models.User{
@@ -32,7 +32,7 @@ func (e *Endpoint) IsUser(next tele.HandlerFunc) tele.HandlerFunc {
 					IsPremium: c.Sender().IsPremium,
 				}
 
-				err = e.User.AddUser(user)
+				err = e.User.Add(user)
 				if err != nil {
 					return err
 				}
@@ -42,7 +42,7 @@ func (e *Endpoint) IsUser(next tele.HandlerFunc) tele.HandlerFunc {
 		}
 
 		if data.Username != c.Sender().Username || data.Firstname != c.Sender().FirstName || data.Lastname != c.Sender().LastName || data.IsPremium != c.Sender().IsPremium {
-			err = e.User.UpdateUser(data)
+			err = e.User.Update(data)
 			if err != nil {
 				return err
 			}

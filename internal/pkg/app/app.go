@@ -6,17 +6,19 @@ import (
 	tele "gopkg.in/telebot.v3"
 	"hamsterbot/config"
 	"hamsterbot/internal/app/handlers/base"
+	"hamsterbot/internal/app/middleware"
 	baseService "hamsterbot/internal/app/services/base"
+	usersService "hamsterbot/internal/app/services/users"
 	"hamsterbot/pkg/cache"
 	"hamsterbot/pkg/db"
 	"hamsterbot/pkg/logger"
 	"log"
-	"strings"
 	"time"
 )
 
 type App struct {
-	base *baseService.Service
+	base  *baseService.Service
+	users *usersService.Service
 }
 
 func New() (*App, error) {
@@ -57,40 +59,18 @@ func InitBot(TelegramAPI string, a *App) {
 
 	// Сервисы
 	a.base = baseService.New()
+	a.users = usersService.New()
+
+	// Middleware
+	mw := middleware.Endpoint{Bot: b, User: a.users}
+	b.Use(mw.IsUser)
 
 	// Эндпоинты
 	baseEndpoint := base.Endpoint{Base: a.base}
 
-	// Middlewares
-	b.Use(mwUsers.IsUser)
-
 	// Обработчики
 	b.Handle("/help", baseEndpoint.HelpHandler)
 
-	b.Handle("/send", func(c tele.Context) error {
-		if c.Sender().ID != 1230045591 {
-			return nil
-		}
-
-		args := c.Args()
-
-		chatID := int64(-1002138316635)
-
-		// Используем метод Send у объекта бота для отправки сообщения
-		_, err := c.Bot().Send(tele.ChatID(chatID), strings.Join(args, " "))
-		return err
-	})
-
-	b.Handle(tele.OnText, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnAudio, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnCallback, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnDocument, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnEdited, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnMedia, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnPhoto, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnSticker, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnVideo, func(c tele.Context) error { return nil })
-	b.Handle(tele.OnVoice, func(c tele.Context) error { return nil })
-
+	logger.Info("Бот запущен")
 	b.Start()
 }
