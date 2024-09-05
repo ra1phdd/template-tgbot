@@ -5,6 +5,7 @@ import (
 	tele "gopkg.in/telebot.v3"
 	"hamsterbot/internal/app/constants"
 	"hamsterbot/internal/app/models"
+	"hamsterbot/pkg/metrics"
 )
 
 type User interface {
@@ -21,6 +22,8 @@ type Endpoint struct {
 
 func (e *Endpoint) IsUser(next tele.HandlerFunc) tele.HandlerFunc {
 	return func(c tele.Context) error {
+		metrics.IncomingMessages.Inc()
+
 		data, err := e.User.GetById(c.Sender().ID)
 		if err != nil {
 			if errors.Is(err, constants.ErrUserNotFound) {

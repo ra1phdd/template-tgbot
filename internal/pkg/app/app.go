@@ -12,6 +12,7 @@ import (
 	"hamsterbot/pkg/cache"
 	"hamsterbot/pkg/db"
 	"hamsterbot/pkg/logger"
+	"hamsterbot/pkg/metrics"
 	"log"
 	"time"
 )
@@ -31,15 +32,17 @@ func New() (*App, error) {
 
 	logger.Init(cfg.LoggerLevel)
 
-	err = cache.Init(fmt.Sprintf("%s:%s", cfg.Redis.RedisAddr, cfg.Redis.RedisPort), cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
+	err = cache.Init(fmt.Sprintf("%s:%s", cfg.Redis.Address, cfg.Redis.Port), cfg.Redis.Username, cfg.Redis.Password, cfg.Redis.DBId)
 	if err != nil {
 		logger.Error("Ошибка при инициализации кэша", zap.Error(err))
 	}
 
-	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	err = db.Init(cfg.DB.Username, cfg.DB.Password, cfg.DB.Host, cfg.DB.Name)
 	if err != nil {
 		logger.Fatal("Ошибка при инициализации БД", zap.Error(err))
 	}
+
+	go metrics.Init()
 
 	InitBot(cfg.TelegramAPI, a)
 

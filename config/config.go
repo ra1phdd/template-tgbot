@@ -14,24 +14,24 @@ type Configuration struct {
 }
 
 type DB struct {
-	DBUser     string `env:"DB_USER,required"`
-	DBPassword string `env:"DB_PASSWORD,required"`
-	DBName     string `env:"DB_NAME,required"`
-	DBHost     string `env:"DB_HOST,required"`
+	Host     string `env:"DB_HOST,required"`
+	Username string `env:"DB_USERNAME,required"`
+	Password string `env:"DB_PASSWORD,required"`
+	Name     string `env:"DB_NAME,required"`
 }
 
 type Redis struct {
-	RedisAddr     string `env:"REDIS_ADDR,required"`
-	RedisPort     string `env:"REDIS_PORT" envDefault:"6379"`
-	RedisUsername string `env:"REDIS_USERNAME,required"`
-	RedisPassword string `env:"REDIS_PASSWORD,required"`
-	RedisDBId     int    `env:"REDIS_DB_ID,required"`
+	Address  string `env:"REDIS_ADDR,required"`
+	Port     string `env:"REDIS_PORT" envDefault:"6379"`
+	Username string `env:"REDIS_USERNAME,required"`
+	Password string `env:"REDIS_PASSWORD,required"`
+	DBId     int    `env:"REDIS_DB_ID,required"`
 }
 
 func NewConfig(files ...string) (*Configuration, error) {
 	err := godotenv.Load(files...)
 	if err != nil {
-		log.Fatal("Файл .env не найден", err.Error())
+		log.Fatal("Файл .env не найден")
 	}
 
 	cfg := Configuration{}
